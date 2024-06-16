@@ -28,11 +28,11 @@ app.post('/posts', (req, res) => {
         const post_id = randomBytes(4).toString('hex');
 
         // Extract request data needed for post creation
-        const {post_title} = req.body;
+        const {title} = req.body;
 
         // create the post
         posts[post_id] = {
-            post_id, post_title
+            post_id, title
         };
         // send back a success status
         res.status(201).send(posts[post_id]);
