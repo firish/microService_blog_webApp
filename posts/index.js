@@ -2,12 +2,14 @@
 const express = require('express');
 const bodyParser = require('body-parser'); // To parse JSON correctly with requests and responses
 const {randomBytes} = require('crypto'); // used for generating random unique identifiers
+const cors = require('cors'); // For enabling cross-origin requests
 
 // Initialize the express app
 const app = express();
 
 // Set app features and middleware
 app.use(bodyParser.json());
+app.use(cors()); // TODO: set-up a domain-and-port whitelist file?
 
 // Setting up Memory
 // Note: For this simple project, we use local machine memory, or browser's storage
