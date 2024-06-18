@@ -36,7 +36,7 @@ const PostCreateComponent = () => {
                 <label>Title</label>
                 <input 
                     value={title}
-                    onChange={e => setTitle(e.target.value)} 
+                    onChange={(e) => setTitle(e.target.value)} 
                     className='form-control'>
                 </input>
             </div>

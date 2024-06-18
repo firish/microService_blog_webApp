@@ -4,6 +4,7 @@ import axios from 'axios';
 
 // custom Imports
 import CommentCreateComponent from './commentCreate';
+import CommentListComponent from './commentList';
 
 // React Component
 const PostListComponent = () => {
@@ -16,6 +17,7 @@ const PostListComponent = () => {
             // Make the GET API request
             // TODO: Create a constant file for API endpoints?
             const res = await axios.get('http://localhost:4000/posts');
+            // console.log('Posts fetched:', res.data);
             setPosts(res.data);
         } catch (exception) {
             // TODO: Create a constants file with error codes?
@@ -30,14 +32,16 @@ const PostListComponent = () => {
 
     // Display cards for each retrieved post
     const renderedPosts = Object.values(posts).map(post => {
+        // console.log(`Rendering post with ID: ${post.id}`);
         return (
             <div 
                 className='card' 
                 style={{width: '30%', marginBottom: '20px'}}
-                key={posts.id}
+                key={post.id}
             >
                 <div className='card-body'>
                     <h3>{post.title}</h3>
+                    <CommentListComponent postId={post.id} />
                     <CommentCreateComponent postId={post.id} />
                 </div>
             </div>

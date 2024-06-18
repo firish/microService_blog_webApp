@@ -10,12 +10,13 @@ const CommentCreateComponent = ({postId}) => {
     // Component API requests
     const onSubmit = async (event) => {
         event.preventDefault(); // Disable the default onSubmit action
+        // console.log(`POSTId : ${postId}`);
 
         try {
             // Make the Post API request
             // TODO: Create a constant file for API endpoints?
             await axios.post(`http://localhost:4001/posts/${postId}/comments`, {
-                content
+                content,
             });
 
             setContent(''); // Clear the comment content after a successful request
@@ -36,7 +37,7 @@ const CommentCreateComponent = ({postId}) => {
                 <label>New Comment</label>
                 <input 
                     value={content}
-                    onChange={e => setContent(e.target.value)} 
+                    onChange={(e) => setContent(e.target.value)} 
                     className='form-control'>
                 </input>
             </div>

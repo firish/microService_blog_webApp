@@ -34,8 +34,8 @@ app.post('/posts', (req, res) => {
 
         // create the post
         posts[post_id] = {
-            post_id, title
-        };
+            id: post_id, title
+        }; 
         // send back a success status
         res.status(201).send(posts[post_id]);
     }
