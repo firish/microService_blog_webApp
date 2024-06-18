@@ -2,6 +2,9 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
+// custom Imports
+import CommentCreateComponent from './commentCreate';
+
 // React Component
 const PostListComponent = () => {
     // Setting up the react hooks for this component
@@ -35,6 +38,7 @@ const PostListComponent = () => {
             >
                 <div className='card-body'>
                     <h3>{post.title}</h3>
+                    <CommentCreateComponent postId={post.id} />
                 </div>
             </div>
         );
