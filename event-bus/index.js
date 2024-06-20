@@ -13,18 +13,19 @@ app.use(bodyParser.json());
 app.use(cors()); // TODO: set-up a domain-and-port whitelist file?
 
 // Emitting Events
-app.post('/events', (req, res) => {
-    try{
+app.post('/events', async (req, res) => {
+    try{ 
         const event = req.body;
 
         // Emit the event to every service
         // TODO: Really need to create the constants file with API endpoints
         // Note: This is a naive implementation that does not correctly deal with failing requests
-        axios.post('http://localhost:4000/events', event);
-        axios.post('http://localhost:4001/events', event);
-        axios.post('http://localhost:4002/events', event);
+        console.log(`---> Event received at event bus: ${JSON.stringify(event)}, and emitted to all micro-services`);
+        await axios.post('http://localhost:4000/events', event);
+        await axios.post('http://localhost:4001/events', event);
+        // await axios.post('http://localhost:4002/events', event);
 
-        res.send({status: "OK"});
+        res.send({status: "OK"}); 
     }
     catch (exception){
         res.status(500).send({status: "Err", error: exception});

@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser'); // To parse JSON correctly with requests and responses
 const {randomBytes} = require('crypto'); // used for generating random unique identifiers
 const cors = require('cors'); // For enabling cross-origin requests
+const axios = require('axios'); // For sending API requests
 
 // Initialize the express app
 const app = express();
@@ -24,7 +25,7 @@ app.get('/posts', (req, res) => {
 });
 
 // Post Routes
-app.post('/posts', (req, res) => {
+app.post('/posts', async (req, res) => {
     try{
         // Create a unique ID for the post
         const post_id = randomBytes(4).toString('hex');
@@ -36,6 +37,18 @@ app.post('/posts', (req, res) => {
         posts[post_id] = {
             id: post_id, title
         }; 
+
+        // Emit an event to the event bus
+        // TODO: Create a logger dump file with timestamps? 
+        console.log("Emitting postCreated event to the event bus");
+        await axios.post("http://localhost:4005/events", {
+            type: "postCreated", 
+            data: {
+                id: post_id, 
+                title: title
+            }
+        });
+
         // send back a success status
         res.status(201).send(posts[post_id]);
     }
@@ -43,6 +56,12 @@ app.post('/posts', (req, res) => {
         res.status(500).send(exception.toString());
     }
 });
+
+// Handle for received events (The service may/may not subscribe to the events)
+app.post('/events', (req, res) => {
+    console.log(`The following event was receievd by the post service: ${req.body.type}`);
+    res.send({});
+}); 
 
 // Tie the service to a port
 const port = 4000;
