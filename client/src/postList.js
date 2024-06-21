@@ -16,7 +16,7 @@ const PostListComponent = () => {
         try {
             // Make the GET API request
             // TODO: Create a constant file for API endpoints?
-            const res = await axios.get('http://localhost:4000/posts');
+            const res = await axios.get('http://localhost:4002/posts'); // making the request to the query service instead of the post service
             // console.log('Posts fetched:', res.data);
             setPosts(res.data);
         } catch (exception) {
@@ -41,7 +41,7 @@ const PostListComponent = () => {
             >
                 <div className='card-body'>
                     <h3>{post.title}</h3>
-                    <CommentListComponent postId={post.id} />
+                    <CommentListComponent comments={post.comments} />
                     <CommentCreateComponent postId={post.id} />
                 </div>
             </div>

@@ -23,7 +23,7 @@ app.post('/events', async (req, res) => {
         console.log(`---> Event received at event bus: ${JSON.stringify(event)}, and emitted to all micro-services`);
         await axios.post('http://localhost:4000/events', event);
         await axios.post('http://localhost:4001/events', event);
-        // await axios.post('http://localhost:4002/events', event);
+        await axios.post('http://localhost:4002/events', event);
 
         res.send({status: "OK"}); 
     }
