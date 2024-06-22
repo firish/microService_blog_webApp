@@ -29,7 +29,7 @@ app.get('/posts', (req, res) => {
 app.post('/events', (req, res) => {
     try{
         const {type, data} = req.body;
-        console.log(`The following event was receievd by the post service: ${type}`);
+        console.log(`The following event was receievd by the query service: ${type}`);
 
         // Subscribe to postCreated Event
             if (type === "postCreated"){
@@ -39,15 +39,29 @@ app.post('/events', (req, res) => {
 
         // Subscribe to commentCreated Event
         if (type === "commentCreated"){
-            const {id, content, postId} = data;
-            postsAndComments[postId].comments.push({id, content});
+            let {id, content, postId, status} = data;
+            postsAndComments[postId].comments.push({id, content, status});
         }
+
+        // Subscribe to commentUpdated Event
+        if (type === "commentUpdated"){
+            let {id, content, postId, status} = data;
+            let postComments = postsAndComments[postId].comments;
+            let currentComment = postComments.find(comment => {
+                return comment.id === id; 
+            });
+
+            // Update the entire current comment
+            currentComment.content = content;
+            currentComment.status = status;
+            }
 
         // Note: sending the entire object for ease of testing and debugging,
         // Before build, change this to send just an 'OK' response.
         res.send(postsAndComments);
     }
     catch (exception){
+        console.log("exception ::: ", exception);
         res.status(500).send(exception);
     }
 });

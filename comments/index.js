@@ -46,7 +46,8 @@ app.post('/posts/:id/comments', async (req, res) => {
         const post_comments = commentsByPostId[post_id] || [];
 
         // create the comment
-        post_comments.push({id: comment_id, content});
+        // TODO: create a choice/constants file for all the different status
+        post_comments.push({id: comment_id, content: content, status: "pending"});
         commentsByPostId[post_id] = post_comments;
 
         // Emit an event to the event bus
@@ -57,7 +58,8 @@ app.post('/posts/:id/comments', async (req, res) => {
             data: {
                 id: comment_id, 
                 content: content,
-                postId: post_id
+                postId: post_id,
+                status: "pending"
             }
         });
 
@@ -70,9 +72,45 @@ app.post('/posts/:id/comments', async (req, res) => {
 });
 
 // Handle for received events (The service may/may not subscribe to the events)
-app.post('/events', (req, res) => {
-    console.log(`The following event was receievd by the post service: ${req.body.type}`);
-    res.send({});
+app.post('/events', async (req, res) => {
+    try{
+        const {type, data} = req.body; 
+        console.log(`The following event was receievd by the post service: ${type}`);
+
+        // subscribe to commentModerated
+        if (type === "commentModerated"){
+            const {id, postId, status} = data;
+
+            // Find the relevant comment
+            let postComments = commentsByPostId[postId];
+            let currentComment = postComments.find(comment => {
+                return comment.id === id; 
+            });
+
+            // Update the status of the comment
+            currentComment.status = status;
+            
+            // Emit this event to the event bus
+            // Emit an event to the event bus
+            // TODO: Create a logger dump file with timestamps? 
+            console.log("Emitting commentUpdated event to the event bus");
+            await axios.post("http://localhost:4005/events", {
+                type: "commentUpdated", 
+                data: {
+                    id: data.id, 
+                    content: data.content,
+                    postId: data.postId,
+                    status: status
+                }
+            });
+        }
+
+        // Send a OK response
+        res.send({status: "OK"}); 
+    }
+    catch (exception){
+        res.status(500).send(exception.toString());
+    }
 })
 
 // Tie the service to a port
