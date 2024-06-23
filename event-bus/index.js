@@ -12,10 +12,16 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors()); // TODO: set-up a domain-and-port whitelist file?
 
+// Variable that stores all the events that are processed are by the event bus sequentially
+const events = [];
+
 // Emitting Events
 app.post('/events', async (req, res) => {
     try{ 
         const event = req.body;
+
+        // Store the event in the event store
+        events.push(event);
 
         // Emit the event to every service
         // TODO: Really need to create the constants file with API endpoints
@@ -33,9 +39,14 @@ app.post('/events', async (req, res) => {
     }
 });
 
+// API endpoint to share the sequentially event storage with other microservices
+// Very useful for syncing up the services when they come up again after crashing
+app.get('/events', (req, res) => {
+    res.send(events); 
+})
+
 // TODO: Move Service-Port Mapping to a global constants/network file
 const event_bus_port = 4005;
 app.listen(event_bus_port, () => {
     console.log(`Event Bus Service is listening on port: ${event_bus_port}`);
 });
-
